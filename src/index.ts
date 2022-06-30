@@ -5,6 +5,8 @@ import { getOne, GetOne } from './getOne'
 import { create, Create } from './create'
 import { update, Update } from './update'
 import { destroy, Destroy } from './delete'
+import { DestroyMany, destroyMany } from './deleteMany'
+import { UpdateMany, updateMany } from './updatemany'
 
 export interface Actions<I extends string | number, R> {
   getOne: GetOne<R> | null
@@ -13,13 +15,15 @@ export interface Actions<I extends string | number, R> {
   update: Update<R> | null
   getList: GetList<R> | null
   search: Search<R> | null
+  destroyMany: DestroyMany | null
+  updateMany: UpdateMany<R> | null
 }
 
 interface CrudOptions {
   filters: FiltersOption
 }
 
-export { GetOne, Create, Destroy, Update, GetList, Search }
+export { GetOne, Create, Destroy, Update, GetList, Search, destroyMany,updateMany }
 
 export const crud = <I extends string | number, R>(
   path: string,
@@ -56,6 +60,16 @@ export const crud = <I extends string | number, R>(
 
   if (actions.destroy) {
     router.delete(`${path}/:id`, destroy(actions.destroy))
+  }
+
+  if (actions.destroyMany){
+    router.post(path, destroyMany(actions.destroyMany))
+
+  }
+
+  if (actions.updateMany){
+    router.post(path, updateMany(actions.updateMany))
+
   }
 
   return router
